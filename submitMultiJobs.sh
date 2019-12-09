@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {1..10000}
+for i in {1..2450}
 do
 	#bsub -q 1nh < submitJobSexaqProd.sh -a $i
 	#bsub -q 8nh < shell/$i.sh
