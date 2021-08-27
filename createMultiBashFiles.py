@@ -6,7 +6,7 @@ parser.add_argument('--nevts', type=int, help='Number of events per file', defau
 parser.add_argument('--scramarch', type=str, help='SCRAM architecture of system', default='slc7_amd64_gcc700')
 parser.add_argument('--workdir', type=str, help='working directory (should be your cmssw/src)', default='/afs/cern.ch/work/w/wvetens/Sexaquarks/tmp/CMSSW_10_2_26/src')
 parser.add_argument('--gfal_prefix', type=str, help='Your T2 prefix for gfal', default='davs://cmsxrootd.hep.wisc.edu:1094')
-parser.add_argument('--trialname', type=str, help='name of trial (note, to change the mass in the simulation in crmc_Sexaq_incl_installed go to crmc.param and at the end of the file add the line "setamhdibar m_x" where m_x is the desire S mass you want to generate', default="27_1p8GeV")
+parser.add_argument('--trialname', type=str, help='name of trial (note, to change the mass in the simulation in crmc_Sexaq_incl_installed go to crmc.param and at the end of the file add the line "setamhdibar m_x" where m_x is the desire S mass you want to generate', default="0_1p8GeV")
 parser.add_argument('--pwstdin', type=str, help='path of fil with password standin for voms', default="~/pwstdin")
 parser.add_argument('--user', type=str, help='your username on lxplus and your T2', default="wvetens")
 
