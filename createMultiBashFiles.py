@@ -13,7 +13,7 @@ parser.add_argument('--user', type=str, help='your username on lxplus and your T
 args = parser.parse_args()
 
 def get_proxy():
-    CMD = 'echo $(voms-proxy-info --path)'
+    CMD = 'cp $(voms-proxy-info --path) userproxy'
     p = subprocess.Popen(CMD, stdout=subprocess.PIPE, shell=True, executable='/bin/bash')
     return p.stdout.readlines()[0].strip()
 proxy = get_proxy()
@@ -50,7 +50,7 @@ for i in range(0,args.nfiles):
 file2 = open("condor_multiple.cfg", "w")
 file2.write("Universe = vanilla\n")
 file2.write("Executable = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/shell/$(ProcID).sh\n")
-file2.write("x509userproxy = " + get_proxy() + "\n")
+file2.write("x509userproxy = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/userproxy\n")
 file2.write("use_x509userproxy = True\n")
 file2.write("Log        = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/condorlog/$(ProcID).log\n")
 file2.write("Output     = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/condorlog/$(ProcID).out\n")
