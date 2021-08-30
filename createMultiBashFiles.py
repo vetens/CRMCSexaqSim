@@ -1,10 +1,10 @@
-import argparse
+import argparse, subprocess
 
 parser = argparse.ArgumentParser(description = 'Generate Bash scripts for EPOS-LHC Generation')
 parser.add_argument('--nfiles', type=int, help='Number of HepMC files to create', default=1000)
 parser.add_argument('--nevts', type=int, help='Number of events per file', default=4000)
 parser.add_argument('--scramarch', type=str, help='SCRAM architecture of system', default='slc7_amd64_gcc700')
-parser.add_argument('--workdir', type=str, help='working directory (should be your cmssw/src)', default='/afs/cern.ch/work/w/wvetens/Sexaquarks/tmp/CMSSW_10_2_26/src')
+parser.add_argument('--workdir', type=str, help='working directory (should be your cmssw/src)', default='/afs/cern.ch/work/w/wvetens/Sexaquarks/CMSSW_10_2_26/src')
 parser.add_argument('--gfal_prefix', type=str, help='Your T2 prefix for gfal', default='davs://cmsxrootd.hep.wisc.edu:1094')
 parser.add_argument('--trialname', type=str, help='name of trial (note, to change the mass in the simulation in crmc_Sexaq_incl_installed go to crmc.param and at the end of the file add the line "setamhdibar m_x" where m_x is the desire S mass you want to generate', default="0_1p8GeV")
 parser.add_argument('--pwstdin', type=str, help='path of fil with password standin for voms', default="~/pwstdin")
@@ -12,6 +12,11 @@ parser.add_argument('--user', type=str, help='your username on lxplus and your T
 
 args = parser.parse_args()
 
+def get_proxy():
+    CMD = 'echo $(voms-proxy-info --path)'
+    p = subprocess.Popen(CMD, stdout=subprocess.PIPE, shell=True, executable='/bin/bash')
+    return p.stdout.readlines()[0].strip()
+proxy = get_proxy()
 #number of files to create
 for i in range(0,args.nfiles):
 	
@@ -42,3 +47,19 @@ for i in range(0,args.nfiles):
 	file.write("rm " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/SexaquarkProduction/OutputRootFile/OutputRootFile_with_Vtx_smearing2/crmc_Sexaq_" + str(i) + ".root " + "\n")
 	file.close()
 
+file2 = open("condor_multiple.cfg", "w")
+file2.write("Universe = vanilla\n")
+file2.write("Executable = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/shell/$(ProcID).sh\n")
+file2.write("x509userproxy = " + get_proxy() + "\n")
+file2.write("use_x509userproxy = True\n")
+file2.write("Log        = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/condorlog/$(ProcID).log\n")
+file2.write("Output     = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/condorlog/$(ProcID).out\n")
+file2.write("Error      = " + args.workdir + "/CustomGenerator/Custom/crmc_Sexaq_incl_installed/CRMCSexaqSim/condorlog/$(ProcID).error\n")
+file2.write("should_transfer_files = Yes\n")
+file2.write("when_to_transfer_output = ON_EXIT\n")
+file2.write("getenv     = True\n")
+file2.write("request_memory = 2000\n")
+file2.write("+JobFlavour = nextweek\n")
+file2.write("\n")
+file2.write("queue " + str(args.nfiles) + "\n")
+file2.close()
