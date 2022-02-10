@@ -1,1 +1,12 @@
- see https://github.com/jarnedc/crmc_Sexaq/blob/master/installCRMCrunGEN.sh for installing crmc
+module for condor batch production of HepMC formatted Sexaquark and converting them to the standard CMSSW GEN format. 
+
+To install this module, first follow the instructions for installing its prerequisites here: https://github.com/vetens/crmc_Sexaq
+
+and then clone this repository into the ``CustomGenerator/Custom/crmc_Sexaq_incl_installed`` directory that is produced by that installation.
+
+SETUP:
+Make sure you have first put your voms proxy credentials in a location which is accessible to condor i.e. using the command ``cp -f $(voms-proxy-info --path) userproxy``
+
+``createMultiBashFiles.py`` will automatically produce the necessary bash files and condor configs, there are many options such as trial number which you should pay attention to however. You may either read the code itself or do ``python createMultiBashFiles.py -h`` to see input options
+
+then ``createMultiBashFiles.py`` produces bash scripts which are run on condor by submitting ``condor_submit condor/<trial>/batch/condor_multiple.cfg``. 
